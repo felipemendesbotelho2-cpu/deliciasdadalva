@@ -3,25 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Delícias da Dalva | Cardápio de Bolos e Doces</title>
-  
+  <title>Delícias da Dalva | Cardápio</title>
+
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
   <style>
     :root {
-      --primary-dark: #3c1e14;   /* Marrom cacau escuro */
-      --primary-gold: #c69214;   /* Dourado caramelo */
-      --banner-bg: #8c5332;      /* Tom marrom quente */
-      --category-bg: #cda87c;    /* Bege dourado/caramelo da faixa */
-      --bg-light: #faf6f0;       /* Creme suave de fundo */
-      --card-bg: #ffffff;       /* Fundo do card */
-      --text-main: #2b1710;      /* Texto principal */
-      --text-sub: #66554e;       /* Texto secundário */
-      --btn-brown: #361b12;      /* Cor do botão de 'Eu quero' */
-      --border-radius: 8px;
+      --primary-dark: #3c1e14;
+      --primary-gold: #c69214;
+      --category-bg: #cda87c;
+      --bg-light: #faf6f0;
+      --card-bg: #ffffff;
+      --text-main: #2b1710;
+      --text-sub: #66554e;
+      --btn-brown: #361b12;
     }
 
     * {
@@ -35,82 +33,33 @@
       background-color: var(--bg-light);
       color: var(--text-main);
       line-height: 1.4;
-      -webkit-font-smoothing: antialiased;
     }
 
-    /* NAV / HEADER SUPERIOR */
-    .top-header {
+    /* HEADER */
+    header {
       background-color: #ffffff;
       border-bottom: 1px solid #e2d9d0;
-      padding: 12px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      padding: 15px 20px;
+      text-align: center;
       box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     }
 
-    .brand-logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      text-decoration: none;
+    header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
       color: var(--primary-dark);
+      margin-bottom: 4px;
     }
 
-    .brand-logo-icon {
-      width: 42px;
-      height: 42px;
-      background: var(--primary-dark);
-      color: var(--primary-gold);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Playfair Display', serif;
-      font-weight: 700;
-      font-size: 20px;
-      border: 2px solid var(--primary-gold);
+    header p {
+      font-size: 13px;
+      color: var(--text-sub);
     }
 
-    .brand-logo-text {
-      font-family: 'Playfair Display', serif;
-      font-size: 22px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-    }
-
-    .header-actions {
-      display: flex;
-      gap: 15px;
-      align-items: center;
-    }
-
-    .cart-btn {
-      background-color: #25d366;
-      color: white;
-      padding: 8px 16px;
-      border-radius: 20px;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: transform 0.2s, background 0.2s;
-    }
-
-    .cart-btn:hover {
-      background-color: #1ebc57;
-      transform: translateY(-1px);
-    }
-
-    /* HERO BANNER - ESTILO SODIÊ */
+    /* BANNER HERO */
     .hero-banner {
       position: relative;
-      height: 380px;
+      height: 240px;
       background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url('https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=1600&auto=format&fit=crop') center/cover no-repeat;
       display: flex;
       flex-direction: column;
@@ -121,40 +70,25 @@
       padding: 20px;
     }
 
-    .hero-title {
-      font-family: 'Montserrat', sans-serif;
-      font-size: 42px;
+    .hero-banner h2 {
+      font-size: 32px;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 3px;
-      margin-bottom: 12px;
-      text-shadow: 2px 2px 8px rgba(0,0,0,0.6);
+      letter-spacing: 2px;
+      margin-bottom: 8px;
     }
 
-    .hero-subtitle {
-      font-size: 15px;
-      max-width: 650px;
-      line-height: 1.6;
-      font-weight: 400;
-      text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
-      opacity: 0.95;
+    .hero-banner p {
+      font-size: 14px;
+      max-width: 600px;
+      opacity: 0.9;
     }
 
-    /* SEÇÃO DE CATEGORIAS (FAIXA BEGE) */
+    /* BARRA DE CATEGORIAS */
     .categories-section {
       background-color: var(--category-bg);
-      padding: 25px 15px;
+      padding: 20px 15px;
       text-align: center;
-      box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
-    }
-
-    .categories-title {
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #ffffff;
-      font-weight: 600;
-      margin-bottom: 15px;
     }
 
     .categories-wrapper {
@@ -170,13 +104,12 @@
       background-color: #ffffff;
       color: var(--primary-dark);
       border: none;
-      padding: 10px 22px;
+      padding: 8px 18px;
       border-radius: 6px;
       font-size: 13px;
       font-weight: 700;
       cursor: pointer;
       transition: all 0.2s ease;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
     .cat-btn:hover, .cat-btn.active {
@@ -184,254 +117,126 @@
       color: #ffffff;
     }
 
-    /* CONTAINER PRINCIPAL E GRID DE PRODUTOS */
-    .main-container {
+    /* CONTAINER PRINCIPAL E CARDS */
+    .container {
       max-width: 1200px;
-      margin: 0 auto;
-      padding: 40px 20px;
+      margin: 30px auto;
+      padding: 0 20px;
     }
 
-    .products-grid {
+    .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
       gap: 25px;
     }
 
-    /* CARD DE PRODUTO ESTILO SODIÊ */
-    .product-card {
+    .card {
       background-color: var(--card-bg);
       border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
-      display: flex;
-      flex-direction: column;
       border: 1px solid #efe8e0;
-      position: relative;
-    }
-
-    .product-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.12);
-    }
-
-    .product-sku {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      font-size: 11px;
-      color: #888;
-      font-weight: 600;
-      z-index: 2;
-    }
-
-    .product-img-wrapper {
-      width: 100%;
-      height: 200px;
-      background-color: #fafafa;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 15px;
-      overflow: hidden;
-    }
-
-    .product-img {
-      max-height: 100%;
-      max-width: 100%;
-      object-fit: contain;
-      transition: transform 0.3s ease;
-    }
-
-    .product-card:hover .product-img {
-      transform: scale(1.06);
-    }
-
-    .product-info {
-      padding: 15px;
       display: flex;
       flex-direction: column;
-      flex-grow: 1;
       text-align: center;
-      justify-content: space-between;
-      background: #ffffff;
+      padding: 15px;
+      transition: transform 0.2s ease;
     }
 
-    .product-name {
-      font-size: 15px;
-      font-weight: 700;
+    .card:hover {
+      transform: translateY(-4px);
+    }
+
+    .card img {
+      width: 100%;
+      height: 180px;
+      object-fit: contain;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      background-color: #fafafa;
+    }
+
+    .card h3 {
+      font-size: 16px;
       color: var(--primary-dark);
       margin-bottom: 6px;
-      line-height: 1.3;
+      font-weight: 700;
     }
 
-    .product-desc {
+    .card p {
       font-size: 12px;
       color: var(--text-sub);
-      margin-bottom: 12px;
-      line-height: 1.4;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      min-height: 34px;
+      margin-bottom: 10px;
+      flex-grow: 1;
     }
 
-    .product-price {
+    .card .price {
       font-size: 16px;
       font-weight: 800;
       color: var(--primary-dark);
       margin-bottom: 12px;
     }
 
-    .order-btn {
+    .card .btn-pedir {
       background-color: var(--btn-brown);
       color: #ffffff;
-      border: none;
-      padding: 10px 18px;
+      text-decoration: none;
+      padding: 10px;
       border-radius: 6px;
       font-weight: 700;
       font-size: 13px;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
-      width: 100%;
-      text-decoration: none;
-      display: inline-block;
-      text-align: center;
+      display: block;
+      transition: background 0.2s;
     }
 
-    .order-btn:hover {
+    .card .btn-pedir:hover {
       background-color: #542b1d;
     }
 
-    /* SPINNER DE CARREGAMENTO */
-    .loading-state {
-      text-align: center;
-      padding: 60px 20px;
-      color: var(--text-sub);
-      grid-column: 1 / -1;
-    }
-
-    .spinner {
-      width: 40px;
-      height: 40px;
-      border: 4px solid rgba(0,0,0,0.1);
-      border-top-color: var(--primary-gold);
-      border-radius: 50%;
-      animation: spin 1s infinite linear;
-      margin: 0 auto 15px;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    /* FOOTER / RODAPÉ */
     footer {
       background-color: var(--primary-dark);
       color: #d1c4b9;
       text-align: center;
-      padding: 30px 20px;
+      padding: 25px 20px;
       font-size: 13px;
-      margin-top: 50px;
-      border-top: 3px solid var(--primary-gold);
-    }
-
-    footer strong {
-      color: #ffffff;
-    }
-
-    /* RESPONSIVIDADE */
-    @media (max-width: 768px) {
-      .hero-title {
-        font-size: 28px;
-      }
-      .hero-subtitle {
-        font-size: 13px;
-      }
-      .hero-banner {
-        height: 280px;
-      }
-      .products-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 15px;
-      }
-      .product-img-wrapper {
-        height: 150px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .products-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-      }
-      .product-info {
-        padding: 10px;
-      }
-      .product-name {
-        font-size: 13px;
-      }
-      .order-btn {
-        padding: 8px 10px;
-        font-size: 12px;
-      }
+      margin-top: 40px;
     }
   </style>
 </head>
 <body>
 
-  <!-- NAVEGAÇÃO / CABEÇALHO SUPERIOR -->
-  <header class="top-header">
-    <a href="#" class="brand-logo">
-      <div class="brand-logo-icon">D</div>
-      <span class="brand-logo-text">Delícias da Dalva</span>
-    </a>
-    <div class="header-actions">
-      <a href="https://wa.me/5563999999999" target="_blank" class="cart-btn">
-        <span>💬 Pedir no WhatsApp</span>
-      </a>
-    </div>
+  <header>
+    <h1>Delícias da Dalva</h1>
+    <p>Confeitaria Artesanal</p>
   </header>
 
-  <!-- SEÇÃO HERO BANNER -->
   <section class="hero-banner">
-    <h1 class="hero-title">BOLOS & DOCES</h1>
-    <p class="hero-subtitle">Deliciosamente recheados e feitos com muito amor. Cada um de nossos bolos é preparado artesanalmente para proporcionar mais carinho e sabor para todas as suas ocasiões.</p>
+    <h2>Bolos & Doces</h2>
+    <p>Escolha seus favoritos e faça seu pedido direto pelo WhatsApp!</p>
   </section>
 
-  <!-- FAIXA DE CATEGORIAS -->
   <section class="categories-section">
-    <div class="categories-title">Selecione a categoria</div>
     <div class="categories-wrapper" id="categoryButtons">
-      <button class="cat-btn active" onclick="filterCategory('Todas')">Todas</button>
+      <!-- Botões de Categoria inseridos via JS -->
     </div>
   </section>
 
-  <!-- CORPO PRINCIPAL COM CARDS -->
-  <main class="main-container">
-    <div class="products-grid" id="productsGrid">
-      <div class="loading-state">
-        <div class="spinner"></div>
-        <p>Carregando o cardápio com amor...</p>
-      </div>
+  <main class="container">
+    <div class="grid" id="productsGrid">
+      <p style="grid-column: 1/-1; text-align: center;">Carregando produtos...</p>
     </div>
   </main>
 
-  <!-- RODAPÉ -->
   <footer>
-    <p>© 2026 <strong>Delícias da Dalva</strong> — Confeitaria Artesanal. Todos os direitos reservados.</p>
+    <p>© Delícias da Dalva - Todos os direitos reservados.</p>
   </footer>
 
-  <!-- INTEGRACÃO GOOGLE SHEETS COM SUPORTE AUTOMÁTICO DE COLUNAS -->
   <script>
-    // URL DA SUA PLANILHA PUBLICADA COMO CSV
+    // Mantendo toda a sua lógica de leitura da planilha original
     const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/1lpioNj5NYmKWH89zrJ7k-BSJYRgvpHvGRV3WvNo3NHa/pub?gid=1031257044&single=true&output=csv';
 
-    let allProducts = [];
-    const NUMERO_WHATSAPP = '5563999999999'; // Coloque aqui seu número com DDD se desejar
+    let produtos = [];
 
-    // Função para converter linha CSV tratando aspas corretamente
     function parseCSVLine(text) {
       let p = '', c = '', q = false;
       let row = [];
@@ -451,134 +256,101 @@
       return row;
     }
 
-    async function loadSheetData() {
+    async function carregarDados() {
       try {
-        const response = await fetch(SHEET_CSV_URL);
-        const csvText = await response.text();
-        
-        const lines = csvText.split(/\r?\n/).filter(line => line.trim() !== '');
-        if (lines.length < 2) return;
+        const res = await fetch(SHEET_CSV_URL);
+        const csv = await res.text();
+        const linhas = csv.split(/\r?\n/).filter(l => l.trim() !== '');
+        if (linhas.length < 2) return;
 
-        const headers = parseCSVLine(lines[0]).map(h => h.toLowerCase().trim());
+        const headers = parseCSVLine(linhas[0]).map(h => h.toLowerCase().trim());
 
-        // Função flexível para identificar colunas mesmo com nomes variados
-        const getIdx = (...names) => {
+        const idx = (...names) => {
           for (let name of names) {
-            const index = headers.findIndex(h => h.includes(name.toLowerCase()));
-            if (index !== -1) return index;
+            const i = headers.findIndex(h => h.includes(name.toLowerCase()));
+            if (i !== -1) return i;
           }
           return -1;
         };
 
-        const iSku = getIdx('sku', 'codigo', 'id');
-        const iCat = getIdx('categoria', 'tipo');
-        const iNome = getIdx('nome', 'produto', 'titulo');
-        const iDesc = getIdx('descricao', 'detalhes', 'obs');
-        const iPreco = getIdx('preco', 'valor');
-        const iFoto = getIdx('url_foto', 'urlfoto', 'foto', 'imagem', 'url');
+        const iSku = idx('sku', 'codigo');
+        const iCat = idx('categoria');
+        const iNome = idx('nome', 'produto');
+        const iDesc = idx('descricao');
+        const iPreco = idx('preco', 'valor');
+        const iImg = idx('url_foto', 'urlfoto', 'foto', 'imagem');
 
-        allProducts = [];
-        const categories = new Set();
+        produtos = [];
+        const categorias = new Set(['Todas']);
 
-        for (let i = 1; i < lines.length; i++) {
-          const row = parseCSVLine(lines[i]);
-          if (!row || row.length === 0) continue;
+        for (let i = 1; i < linhas.length; i++) {
+          const row = parseCSVLine(linhas[i]);
+          if (!row || !row[iNome]) continue;
 
-          const nome = row[iNome] || '';
-          if (!nome) continue;
+          const cat = row[iCat] || 'Geral';
+          categorias.add(cat);
 
-          const sku = row[iSku] || `#${100 + i}`;
-          const categoria = row[iCat] || 'Geral';
-          const descricao = row[iDesc] || '';
-          const preco = row[iPreco] || '';
-          let foto = row[iFoto] || '';
-
-          // Se a imagem for da Band ou estiver vazia, usar imagem reserva estilosa
+          let foto = row[iImg] || '';
           if (!foto || foto.includes('band.com.br') || !foto.startsWith('http')) {
             foto = 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=400&auto=format&fit=crop';
           }
 
-          categories.add(categoria);
-
-          allProducts.push({
-            sku,
-            categoria,
-            nome,
-            descricao,
-            preco,
-            foto
+          produtos.push({
+            sku: row[iSku] || '',
+            categoria: cat,
+            nome: row[iNome],
+            descricao: row[iDesc] || '',
+            preco: row[iPreco] || '',
+            imagem: foto
           });
         }
 
-        renderCategoryButtons(Array.from(categories));
-        renderProducts(allProducts);
+        renderCategorias(Array.from(categorias));
+        renderProdutos(produtos);
 
-      } catch (error) {
-        console.error('Erro ao carregar os dados:', error);
-        document.getElementById('productsGrid').innerHTML = '<p style="grid-column:1/-1; text-align:center;">Não foi possível carregar os produtos no momento. Tente novamente mais tarde.</p>';
+      } catch (err) {
+        console.error(err);
+        document.getElementById('productsGrid').innerHTML = '<p style="grid-column: 1/-1; text-align: center;">Erro ao carregar o cardápio.</p>';
       }
     }
 
-    function renderCategoryButtons(categories) {
-      const wrapper = document.getElementById('categoryButtons');
-      let html = `<button class="cat-btn active" onclick="filterCategory('Todas', this)">Todas</button>`;
-      
-      categories.forEach(cat => {
-        html += `<button class="cat-btn" onclick="filterCategory('${cat}', this)">${cat}</button>`;
-      });
-
-      wrapper.innerHTML = html;
+    function renderCategorias(cats) {
+      const container = document.getElementById('categoryButtons');
+      container.innerHTML = cats.map((cat, index) => 
+        `<button class="cat-btn ${index === 0 ? 'active' : ''}" onclick="filtrar('${cat}', this)">${cat}</button>`
+      ).join('');
     }
 
-    function filterCategory(catName, btnElement) {
-      if (btnElement) {
-        document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
-        btnElement.classList.add('active');
-      }
+    function filtrar(cat, btn) {
+      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
 
-      if (catName === 'Todas') {
-        renderProducts(allProducts);
+      if (cat === 'Todas') {
+        renderProdutos(produtos);
       } else {
-        const filtered = allProducts.filter(p => p.categoria === catName);
-        renderProducts(filtered);
+        renderProdutos(produtos.filter(p => p.categoria === cat));
       }
     }
 
-    function renderProducts(products) {
+    function renderProdutos(lista) {
       const grid = document.getElementById('productsGrid');
-      
-      if (products.length === 0) {
-        grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; padding: 40px;">Nenhum produto encontrado nesta categoria.</p>';
+      if (lista.length === 0) {
+        grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">Nenhum produto encontrado.</p>';
         return;
       }
 
-      grid.innerHTML = products.map(p => {
-        const msg = encodeURIComponent(`Olá! Gostaria de encomendar o bolo: ${p.nome} (${p.sku})`);
-        const whatsappLink = `https://wa.me/${NUMERO_WHATSAPP}?text=${msg}`;
-
-        return `
-          <div class="product-card">
-            <span class="product-sku">${p.sku}</span>
-            <div class="product-img-wrapper">
-              <img src="${p.foto}" alt="${p.nome}" class="product-img" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=400&auto=format&fit=crop'">
-            </div>
-            <div class="product-info">
-              <div>
-                <h3 class="product-name">${p.nome}</h3>
-                <p class="product-desc">${p.descricao}</p>
-              </div>
-              <div>
-                ${p.preco ? `<div class="product-price">${p.preco}</div>` : ''}
-                <a href="${whatsappLink}" target="_blank" class="order-btn">Eu quero</a>
-              </div>
-            </div>
-          </div>
-        `;
-      }).join('');
+      grid.innerHTML = lista.map(p => `
+        <div class="card">
+          <img src="${p.imagem}" alt="${p.nome}" onerror="this.src='https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=400&auto=format&fit=crop'">
+          <h3>${p.nome}</h3>
+          <p>${p.descricao}</p>
+          <div class="price">${p.preco}</div>
+          <a class="btn-pedir" href="https://wa.me/5563999999999?text=${encodeURIComponent('Olá! Quero pedir: ' + p.nome)}" target="_blank">Eu Quero</a>
+        </div>
+      `).join('');
     }
 
-    // Inicializar carregamento ao abrir a página
-    document.addEventListener('DOMContentLoaded', loadSheetData);
+    document.addEventListener('DOMContentLoaded', carregarDados);
   </script>
 </body>
 </html>
