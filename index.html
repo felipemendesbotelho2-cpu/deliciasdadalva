@@ -357,7 +357,18 @@ const WHATSAPP_NUMBER = "5563992829742"; // (63) 99282-9742 com DDI 55
 
 /* ---------------- GOOGLE SHEETS + CATÁLOGO ---------------- */
 const SHEET_PUBLISHED_URL = "https://docs.google.com/spreadsheets/d/1VRfjgs_nQ9WwHocsuCVAdKTEwthBa3Wxa9n4VcCdMHM/edit?usp=sharing";
-const SHEET_CSV_URL = SHEET_PUBLISHED_URL.replace(/\/pubhtml.*$/, "/pub?output=csv");
+
+// Monta a URL de exportação CSV a partir de QUALQUER formato de link do Google Sheets
+// (link de edição/compartilhamento OU link "Publicar na web"), extraindo o ID da planilha.
+function buildSheetCsvUrl(url){
+  const idMatch = url.match(/\/d\/([a-zA-Z0-9-_]+)/);
+  const id = idMatch ? idMatch[1] : '';
+  const gidMatch = url.match(/[?&#]gid=([0-9]+)/);
+  const gid = gidMatch ? gidMatch[1] : '0';
+  return `https://docs.google.com/spreadsheets/d/${id}/export?format=csv&gid=${gid}`;
+}
+const SHEET_CSV_URL = buildSheetCsvUrl(SHEET_PUBLISHED_URL);
+
 let CATEGORIES = [];
 let ITEMS = [];
 
@@ -446,23 +457,15 @@ function renderCatalog(){
 
 async function initCatalog(){
   try{await loadProductsFromSheet();renderCatalog();}
-  catch(error){console.error(error);tabsNav.innerHTML='';panelsWrap.innerHTML=`<div class="soon"><div class="display">Não foi possível carregar o cardápio.</div>Confira se a planilha está publicada na web e com acesso público.<br><small>${escapeHtml(error.message)}</small></div>`;}
+  catch(error){console.error(error);tabsNav.innerHTML='';panelsWrap.innerHTML=`<div class="soon"><div class="display">Não foi possível carregar o cardápio.</div>Confira se a planilha está compartilhada como "Qualquer pessoa com o link pode visualizar".<br><small>${escapeHtml(error.message)}</small></div>`;}
 }
 
 /* ---------------- ESTADO ---------------- */
 let cart = {}; // id -> qty
-let activeCat = CATEGORIES[0].id;
+let activeCat = ''; // definido dinamicamente em renderCatalog(), após o carregamento da planilha
 
 /* ---------------- RENDER TABS ---------------- */
 const tabsNav = document.getElementById('tabsNav');
-CATEGORIES.forEach(c=>{
-  const b = document.createElement('button');
-  b.className = 'tab-btn' + (c.id===activeCat ? ' active':'');
-  b.textContent = c.label;
-  b.dataset.cat = c.id;
-  b.addEventListener('click', ()=>setActiveCat(c.id));
-  tabsNav.appendChild(b);
-});
 
 function setActiveCat(catId){
   activeCat = catId;
@@ -472,51 +475,9 @@ function setActiveCat(catId){
 
 /* ---------------- RENDER PANELS ---------------- */
 const panelsWrap = document.getElementById('panelsWrap');
-CATEGORIES.forEach(c=>{
-  const panel = document.createElement('div');
-  panel.className = 'panel' + (c.id===activeCat?' active':'');
-  panel.dataset.cat = c.id;
-
-  if(c.soon){
-    panel.innerHTML = `<div class="soon"><div class="display">Em breve por aqui 🍪</div>Novidades chegando ao cardápio de quitutes. Fale no WhatsApp para saber mais.</div>`;
-    panelsWrap.appendChild(panel);
-    return;
-  }
-
-  const head = document.createElement('div');
-  head.className = 'panel-head';
-  head.innerHTML = `<h2>${c.label}</h2><p>${c.desc}</p>`;
-  panel.appendChild(head);
-
-  const grid = document.createElement('div');
-  grid.className = 'grid';
-
-  ITEMS.filter(i=>i.cat===c.id).forEach(item=>{
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.innerHTML = `
-      <div class="name">${item.name}</div>
-      <div class="meta">${item.meta}</div>
-      <div class="price">${formatBRL(item.price)}</div>
-      <div class="card-foot">
-        <div class="stepper">
-          <button data-act="dec" data-id="${item.id}">−</button>
-          <span id="qty-${item.id}">1</span>
-          <button data-act="inc" data-id="${item.id}">+</button>
-        </div>
-        <button class="add-btn" data-add="${item.id}">Adicionar</button>
-      </div>
-    `;
-    grid.appendChild(card);
-  });
-
-  panel.appendChild(grid);
-  panelsWrap.appendChild(panel);
-});
 
 /* Steppers da vitrine (quantidade antes de adicionar) */
 const pendingQty = {};
-ITEMS.forEach(i=> pendingQty[i.id] = 1);
 
 panelsWrap.addEventListener('click', (e)=>{
   const dec = e.target.closest('[data-act="dec"]');
