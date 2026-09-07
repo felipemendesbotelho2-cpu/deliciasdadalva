@@ -356,8 +356,21 @@
 const WHATSAPP_NUMBER = "5563992829742";
 
 /* ---------------- GOOGLE SHEETS + CATÁLOGO ---------------- */
-const SPREADSHEET_ID = "1CfenA3SmDvX4VSTaiUpayReaSkhNY6c8hb6XWpmIAw";
-const SHEET_CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=Produtos`;
+const SPREADSHEET_ID = "1lpioNj5NYmKWH89zRj7k-BSJYRgvpHvGRV3WvNo3NhA";
+const GID = "1031257044";
+const SHEET_CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=${GID}`;
+
+let ITEMS = [];
+let CATEGORIES = [];
+
+function parseCSV(text) {
+  const rows = [];
+  let row = [];
+  let cell = '';
+  let quoted = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    const next = text[i + 1];
     if (ch === '"' && quoted && next === '"') { cell += '"'; i++; continue; }
     if (ch === '"') { quoted = !quoted; continue; }
     if (ch === ',' && !quoted) { row.push(cell.trim()); cell = ''; continue; }
@@ -458,7 +471,7 @@ function renderCatalog() {
     const panel = document.createElement('div');
     panel.className = 'panel' + (c.id === activeCat ? ' active' : '');
     panel.dataset.cat = c.id;
-    panel.innerHTML = `<div class="panel-head"><h2>${escapeHtml(c.label)}</h2><p>${escapeHtml(c.desc)}</p></div>`;
+    panel.innerHTML = `<div class="panel-head">2>${escapeHtml(c.label)}</h2><p>${escapeHtml(c.desc)}</p></div>`;
 
     const grid = document.createElement('div');
     grid.className = 'grid';
