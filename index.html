@@ -356,16 +356,7 @@
 const WHATSAPP_NUMBER = "5563992829742";
 
 /* ---------------- GOOGLE SHEETS + CATÁLOGO ---------------- */
-const SHEET_PUBLISHED_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSmILGEfkwQWLOoBvWgX0opxocFAzTvCMQn17323LLnJk26AYnoTLuIzv-hQFH3qkvnh2t_TmRCUDGD/pub?output=csv";
-
-function buildSheetCsvUrl(url) {
-  const idMatch = url.match(/\/d\/([a-zA-Z0-9-_]+)/);
-  const id = idMatch ? idMatch[1] : '';
-  const gidMatch = url.match(/[?&#]gid=([0-9]+)/);
-  const gid = gidMatch ? gidMatch[1] : '0';
-  return `https://docs.google.com/spreadsheets/d/${id}/export?format=csv&gid=${gid}`;
-}
-
+const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSmILGEfkwQWLOoBvWgX0opxocFAzTvCMQn17323LLnJk26AYnoTLuIzv-hQFH3qkvnh2t_TmRCUDGD/pub?output=csv";
 const SHEET_CSV_URL = buildSheetCsvUrl(SHEET_PUBLISHED_URL);
 
 let CATEGORIES = [];
