@@ -356,16 +356,8 @@
 const WHATSAPP_NUMBER = "5563992829742";
 
 /* ---------------- GOOGLE SHEETS + CATÁLOGO ---------------- */
-const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSmILGEfkwQWLOoBvWgX0opxocFAzTvCMQn17323LLnJk26AYnoTLuIzv-hQFH3qkvnh2t_TmRCUDGD/pub?output=csv";
-const SHEET_CSV_URL = buildSheetCsvUrl(SHEET_PUBLISHED_URL);
-
-let CATEGORIES = [];
-let ITEMS = [];
-
-function parseCSV(text) {
-  const rows = []; let row = [], cell = '', quoted = false;
-  for (let i = 0; i < text.length; i++) {
-    const ch = text[i], next = text[i+1];
+const SPREADSHEET_ID = "1CfenA3SmDvX4VSTaiUpayReaSkhNY6c8hb6XWpmIAw";
+const SHEET_CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=Produtos`;
     if (ch === '"' && quoted && next === '"') { cell += '"'; i++; continue; }
     if (ch === '"') { quoted = !quoted; continue; }
     if (ch === ',' && !quoted) { row.push(cell.trim()); cell = ''; continue; }
