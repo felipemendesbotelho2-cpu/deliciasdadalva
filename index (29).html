@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Delícias da Dalva | Bolos caseiros feitos com amor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Mulish:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FBF1E2;
+    --cream-card:#FFFCF6;
+    --burgundy:#7A2333;
+    --burgundy-dark:#5C1826;
+    --ink:#3C2415;
+    --gold:#C08A28;
+    --gold-soft:#E9C77B;
+    --blush:#F3DAD1;
+    --line:#E7D6BC;
+    --shadow: 0 10px 30px rgba(60,36,21,0.10);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'Mulish',sans-serif;
+    font-size:16px;
+    line-height:1.5;
+  }
+  h1,h2,h3,.display{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    margin:0;
+    color:var(--burgundy-dark);
+  }
+  img,svg{display:block;max-width:100%;}
+  button{font-family:inherit;cursor:pointer;}
+  a{color:inherit;}
+
+  /* ---------- Header ---------- */
+  header{
+    position:sticky;top:0;z-index:40;
+    background:rgba(251,241,226,0.92);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+  }
+  .header-inner{
+    max-width:1080px;margin:0 auto;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 20px;
+  }
+  .brand{display:flex;align-items:center;gap:10px;}
+  .brand-mark{width:38px;height:38px;flex-shrink:0;}
+  .brand-text{line-height:1.15;}
+  .brand-text .name{font-family:'Fraunces',serif;font-weight:600;font-size:1.15rem;color:var(--burgundy-dark);}
+  .brand-text .tag{font-size:0.72rem;color:var(--gold);letter-spacing:.02em;}
+  .header-actions{display:flex;align-items:center;gap:14px;}
+  .whats-mini{
+    display:flex;align-items:center;gap:6px;
+    font-size:0.85rem;color:var(--burgundy-dark);
+    text-decoration:none;font-weight:600;
+  }
+  .whats-mini svg{width:18px;height:18px;}
+  .cart-btn{
+    position:relative;
+    background:var(--burgundy);color:var(--cream-card);
+    border:none;border-radius:999px;
+    width:42px;height:42px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .cart-btn svg{width:20px;height:20px;}
+  .cart-count{
+    position:absolute;top:-4px;right:-4px;
+    background:var(--gold);color:var(--burgundy-dark);
+    font-size:0.68rem;font-weight:800;
+    min-width:18px;height:18px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    padding:0 2px;
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    max-width:1080px;margin:0 auto;
+    padding:56px 20px 40px;
+    display:grid;grid-template-columns:1.1fr 0.9fr;gap:40px;align-items:center;
+  }
+  .hero .eyebrow{color:var(--gold);font-weight:700;font-size:0.9rem;margin-bottom:10px;}
+  .hero h1{font-size:clamp(2rem,4.5vw,3.1rem);line-height:1.08;letter-spacing:-0.01em;}
+  .hero p.lede{margin-top:16px;font-size:1.05rem;max-width:46ch;color:#5A3E2A;}
+  .hero-ctas{display:flex;gap:12px;margin-top:26px;flex-wrap:wrap;}
+  .btn-primary{
+    background:var(--burgundy);color:#fff;border:none;
+    padding:13px 26px;border-radius:10px;font-weight:700;font-size:0.98rem;
+    box-shadow:var(--shadow);
+  }
+  .btn-primary:hover{background:var(--burgundy-dark);}
+  .btn-ghost{
+    background:transparent;border:1.5px solid var(--burgundy);color:var(--burgundy-dark);
+    padding:12px 24px;border-radius:10px;font-weight:700;font-size:0.98rem;
+  }
+  .hero-art{display:flex;justify-content:center;align-items:center;}
+  .hero-art svg{width:100%;max-width:340px;}
+
+  /* ---------- Tabs ---------- */
+  .tabs-wrap{
+    position:sticky;top:66px;z-index:30;
+    background:var(--cream);
+    border-bottom:1px solid var(--line);
+  }
+  .tabs{
+    max-width:1080px;margin:0 auto;padding:0 20px;
+    display:flex;gap:6px;overflow-x:auto;
+    scrollbar-width:none;
+  }
+  .tabs::-webkit-scrollbar{display:none;}
+  .tab-btn{
+    background:none;border:none;
+    padding:16px 14px 14px;
+    font-weight:700;font-size:0.95rem;
+    color:#8A6A4E;white-space:nowrap;
+    border-bottom:3px solid transparent;
+  }
+  .tab-btn.active{color:var(--burgundy-dark);border-bottom-color:var(--burgundy);}
+
+  /* ---------- Catalog ---------- */
+  main{max-width:1080px;margin:0 auto;padding:34px 20px 90px;}
+  .panel{display:none;}
+  .panel.active{display:block;animation:fadein .35s ease;}
+  @keyframes fadein{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+  .panel-head{margin-bottom:20px;}
+  .panel-head h2{font-size:1.5rem;}
+  .panel-head p{color:#8A6A4E;margin-top:6px;font-size:0.95rem;}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;}
+  .card{
+    background:var(--cream-card);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:18px;
+    display:flex;flex-direction:column;gap:10px;
+    box-shadow:var(--shadow);
+  }
+  .card .name{font-family:'Fraunces',serif;font-weight:600;font-size:1.08rem;color:var(--ink);}
+  .card .meta{font-size:0.82rem;color:#9A7B5C;}
+  .card .price{font-weight:800;color:var(--burgundy);font-size:1.05rem;margin-top:auto;}
+  .card-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:6px;}
+  .stepper{display:flex;align-items:center;border:1px solid var(--line);border-radius:8px;overflow:hidden;}
+  .stepper button{
+    background:var(--blush);border:none;width:30px;height:32px;
+    font-size:1rem;font-weight:700;color:var(--burgundy-dark);
+  }
+  .stepper span{width:28px;text-align:center;font-weight:700;font-size:0.92rem;}
+  .add-btn{
+    background:var(--burgundy);color:#fff;border:none;
+    padding:8px 14px;border-radius:8px;font-weight:700;font-size:0.85rem;
+  }
+  .add-btn.added{background:var(--gold);color:var(--burgundy-dark);}
+
+  .soon{
+    text-align:center;padding:60px 20px;
+    border:1.5px dashed var(--line);border-radius:16px;
+    color:#8A6A4E;
+  }
+  .soon .display{font-size:1.3rem;margin-bottom:8px;color:var(--burgundy-dark);}
+
+  /* ---------- Cart drawer ---------- */
+  .overlay{
+    position:fixed;inset:0;background:rgba(60,36,21,0.35);
+    opacity:0;pointer-events:none;transition:opacity .25s ease;z-index:49;
+  }
+  .overlay.show{opacity:1;pointer-events:auto;}
+  .drawer{
+    position:fixed;top:0;right:0;height:100%;width:min(400px,92vw);
+    background:var(--cream-card);z-index:50;
+    box-shadow:-14px 0 40px rgba(60,36,21,0.18);
+    display:flex;flex-direction:column;
+    transform:translateX(100%);transition:transform .3s ease;
+  }
+  .drawer.show{transform:translateX(0);}
+  .drawer-head{
+    padding:18px 20px;border-bottom:1px solid var(--line);
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .drawer-head h3{font-size:1.15rem;}
+  .close-btn{background:none;border:none;font-size:1.4rem;color:var(--burgundy-dark);line-height:1;padding:4px;}
+  .drawer-body{flex:1;overflow-y:auto;padding:16px 20px;}
+  .empty-cart{text-align:center;color:#9A7B5C;padding:50px 10px;}
+  .cart-item{
+    display:flex;justify-content:space-between;gap:10px;
+    padding:12px 0;border-bottom:1px solid var(--line);
+  }
+  .cart-item .ci-name{font-weight:700;font-size:0.95rem;}
+  .cart-item .ci-price{font-size:0.82rem;color:#9A7B5C;margin-top:2px;}
+  .cart-item .ci-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
+  .remove-link{background:none;border:none;color:var(--burgundy);font-size:0.78rem;font-weight:700;text-decoration:underline;padding:0;}
+  .drawer-foot{border-top:1px solid var(--line);padding:16px 20px 20px;}
+  .field{margin-bottom:12px;}
+  .field label{font-size:0.82rem;font-weight:700;color:#5A3E2A;display:block;margin-bottom:6px;}
+  .field select,.field input,.field textarea{
+    width:100%;border:1px solid var(--line);border-radius:8px;
+    padding:9px 10px;font-family:inherit;font-size:0.9rem;background:#fff;
+  }
+  .field textarea{resize:vertical;min-height:54px;}
+  .total-row{display:flex;justify-content:space-between;font-weight:800;font-size:1.05rem;margin:14px 0;color:var(--burgundy-dark);}
+  .whats-cta{
+    width:100%;background:var(--burgundy);color:#fff;border:none;
+    padding:14px;border-radius:10px;font-weight:800;font-size:0.98rem;
+    display:flex;align-items:center;justify-content:center;gap:8px;
+  }
+  .whats-cta[disabled]{opacity:0.45;pointer-events:none;}
+  .whats-cta svg{width:20px;height:20px;}
+
+  /* ---------- Footer ---------- */
+  footer{
+    background:var(--burgundy-dark);color:var(--blush);
+    padding:34px 20px;margin-top:20px;
+  }
+  .footer-inner{max-width:1080px;margin:0 auto;display:flex;flex-wrap:wrap;justify-content:space-between;gap:20px;align-items:center;}
+  footer .name{font-family:'Fraunces',serif;font-size:1.1rem;color:#fff;}
+  footer .sub{font-size:0.82rem;color:var(--gold-soft);margin-top:4px;}
+  footer .fw{color:var(--blush);text-decoration:none;font-weight:700;font-size:0.9rem;display:flex;align-items:center;gap:6px;}
+
+  @media(max-width:760px){
+    .hero{grid-template-columns:1fr;padding-top:32px;}
+    .hero-art{order:-1;max-width:220px;margin:0 auto;}
+    .tabs-wrap{top:63px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 40 40" fill="none">
+        <path d="M8 22h24v10a3 3 0 0 1-3 3H11a3 3 0 0 1-3-3V22Z" fill="#C08A28"/>
+        <path d="M6 18a3 3 0 0 1 3-3h22a3 3 0 0 1 3 3v4H6v-4Z" fill="#7A2333"/>
+        <circle cx="20" cy="9" r="3.4" fill="#7A2333"/>
+        <path d="M20 12v3" stroke="#7A2333" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+      <div class="brand-text">
+        <div class="name">Delícias da Dalva</div>
+        <div class="tag">Sabor de casa, receita de vó</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <a class="whats-mini" href="#" id="headerWhatsLink" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="#25D366"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2Zm0 18.2a8.1 8.1 0 0 1-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.7.8-.8 1-.2.2-.3.2-.5.1a6.7 6.7 0 0 1-2-1.2 7.4 7.4 0 0 1-1.4-1.7c-.1-.2 0-.4.1-.5l.4-.4.3-.4c0-.1.1-.3 0-.4-.1-.1-.6-1.5-.8-2-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2c0 1.3.9 2.6 1.1 2.8.1.2 1.9 2.9 4.6 4 .6.3 1.1.4 1.5.6.6.2 1.2.2 1.6.1.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2-.1-.1-.2-.2-.5-.3Z"/></svg>
+        63 99282-9742
+      </a>
+      <button class="cart-btn" id="openCartBtn" aria-label="Ver pedido">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+        <span class="cart-count" id="cartCount">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div>
+    <div class="eyebrow">Encomendas todos os dias</div>
+    <h1>Bolo de verdade,<br>feito como a vó fazia.</h1>
+    <p class="lede">Cada bolo da Dalva é feito na hora, com ingredientes de qualidade e o carinho de uma receita de família. Escolha o seu sabor e receba o pedido prontinho no seu WhatsApp.</p>
+    <div class="hero-ctas">
+      <button class="btn-primary" onclick="document.getElementById('catalogo').scrollIntoView({behavior:'smooth'})">Ver cardápio</button>
+      <a class="btn-ghost" href="#" id="heroWhatsLink" target="_blank" rel="noopener">Falar no WhatsApp</a>
+    </div>
+  </div>
+  <div class="hero-art">
+    <svg viewBox="0 0 220 220" fill="none">
+      <ellipse cx="110" cy="188" rx="78" ry="10" fill="#E7D6BC"/>
+      <rect x="40" y="128" width="140" height="52" rx="6" fill="#7A2333"/>
+      <rect x="40" y="128" width="140" height="10" fill="#8E2C3E"/>
+      <rect x="52" y="88" width="116" height="46" rx="6" fill="#C08A28"/>
+      <rect x="52" y="88" width="116" height="9" fill="#D39F3E"/>
+      <rect x="66" y="54" width="88" height="40" rx="6" fill="#F3DAD1"/>
+      <rect x="66" y="54" width="88" height="8" fill="#F8E6DE"/>
+      <path d="M104 54c0-12 6-16 6-24s-6-8-6-14" stroke="#5A3E2A" stroke-width="3" stroke-linecap="round"/>
+      <path d="M118 54c0-10 5-14 5-20" stroke="#5A3E2A" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="118" cy="30" r="4.5" fill="#C08A28"/>
+      <circle cx="70" cy="150" r="5" fill="#F3DAD1"/>
+      <circle cx="150" cy="150" r="5" fill="#F3DAD1"/>
+      <circle cx="90" cy="110" r="4" fill="#F3DAD1"/>
+      <circle cx="140" cy="110" r="4" fill="#F3DAD1"/>
+    </svg>
+  </div>
+</section>
+
+<div class="tabs-wrap" id="catalogo">
+  <nav class="tabs" id="tabsNav"></nav>
+</div>
+
+<main id="panelsWrap"></main>
+
+<div class="overlay" id="overlay"></div>
+<aside class="drawer" id="drawer" aria-label="Seu pedido">
+  <div class="drawer-head">
+    <h3>Seu pedido</h3>
+    <button class="close-btn" id="closeCartBtn" aria-label="Fechar">&times;</button>
+  </div>
+  <div class="drawer-body" id="drawerBody">
+    <div class="empty-cart">Seu carrinho está vazio.<br>Escolha um bolo delicioso no cardápio 🍰</div>
+  </div>
+  <div class="drawer-foot">
+    <div class="field">
+      <label for="deliveryType">Entrega</label>
+      <select id="deliveryType">
+        <option value="Retirada">Retirar no local</option>
+        <option value="Entrega">Entrega (combinar endereço)</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="obsField">Observações (opcional)</label>
+      <textarea id="obsField" placeholder="Ex: sem cobertura, para o dia 20/09, etc."></textarea>
+    </div>
+    <div class="total-row"><span>Total</span><span id="totalValue">R$ 0,00</span></div>
+    <button class="whats-cta" id="finishBtn" disabled>
+      <svg viewBox="0 0 24 24" fill="#fff"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2Zm0 18.2a8.1 8.1 0 0 1-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.7.8-.8 1-.2.2-.3.2-.5.1a6.7 6.7 0 0 1-2-1.2 7.4 7.4 0 0 1-1.4-1.7c-.1-.2 0-.4.1-.5l.4-.4.3-.4c0-.1.1-.3 0-.4-.1-.1-.6-1.5-.8-2-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2c0 1.3.9 2.6 1.1 2.8.1.2 1.9 2.9 4.6 4 .6.3 1.1.4 1.5.6.6.2 1.2.2 1.6.1.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2-.1-.1-.2-.2-.5-.3Z"/></svg>
+      Finalizar pedido no WhatsApp
+    </button>
+  </div>
+</aside>
+
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="name">Delícias da Dalva</div>
+      <div class="sub">Bolos e panificação caseira • Encomendas todos os dias</div>
+    </div>
+    <a class="fw" href="#" id="footerWhatsLink" target="_blank" rel="noopener">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="#25D366"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2Zm0 18.2a8.1 8.1 0 0 1-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.7.8-.8 1-.2.2-.3.2-.5.1a6.7 6.7 0 0 1-2-1.2 7.4 7.4 0 0 1-1.4-1.7c-.1-.2 0-.4.1-.5l.4-.4.3-.4c0-.1.1-.3 0-.4-.1-.1-.6-1.5-.8-2-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2c0 1.3.9 2.6 1.1 2.8.1.2 1.9 2.9 4.6 4 .6.3 1.1.4 1.5.6.6.2 1.2.2 1.6.1.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2-.1-.1-.2-.2-.5-.3Z"/></svg>
+      63 99282-9742
+    </a>
+  </div>
+</footer>
+
+<script>
+/* ---------------- CONFIG ---------------- */
+const WHATSAPP_NUMBER = "5563992829742"; // (63) 99282-9742 com DDI 55
+
+/* ---------------- CATÁLOGO ---------------- */
+const CATEGORIES = [
+  {id:"tradicionais", label:"Bolos Tradicionais", desc:"Bolos médios de 18cm, no sabor clássico de sempre."},
+  {id:"especiais", label:"Bolos Especiais", desc:"Combinações especiais da casa, 18cm."},
+  {id:"panificacao", label:"Panificação", desc:"Pães, cucas e rosquinhas caseiras, fresquinhos."},
+  {id:"biscoitos", label:"Biscoitos Artesanais", desc:"Receitas tradicionais, perfeitas para acompanhar um café."}
+];
+
+const ITEMS = [
+  {id:1, cat:"tradicionais", name:"Cenoura", meta:"Bolo médio · 18cm", price:24.00},
+  {id:2, cat:"tradicionais", name:"Chocolate", meta:"Bolo médio · 18cm", price:24.00},
+  {id:3, cat:"tradicionais", name:"Laranja", meta:"Bolo médio · 18cm", price:24.00},
+  {id:4, cat:"tradicionais", name:"Fubá", meta:"Bolo médio · 18cm", price:24.00},
+  {id:5, cat:"tradicionais", name:"Coco", meta:"Bolo médio · 18cm", price:30.00},
+  {id:6, cat:"tradicionais", name:"Milho", meta:"Bolo médio · 18cm", price:26.00},
+  {id:15, cat:"tradicionais", name:"Bolo de arroz tradicional", meta:"Receita de antigamente · 18cm", price:25.00},
+
+  {id:7, cat:"especiais", name:"Cenoura com chocolate", meta:"Bolo médio · 18cm", price:28.00},
+  {id:8, cat:"especiais", name:"Chocolate com granulado", meta:"Bolo médio · 18cm", price:28.00},
+  {id:9, cat:"especiais", name:"Fubá com goiabada", meta:"Bolo médio · 18cm", price:28.00},
+  {id:10, cat:"especiais", name:"Milho com requeijão", meta:"Bolo médio · 18cm", price:28.00},
+  {id:11, cat:"especiais", name:"Mandioca com coco", meta:"Bolo médio · 18cm", price:34.00},
+  {id:12, cat:"especiais", name:"Mangulão", meta:"Bolo médio · 18cm", price:34.00},
+
+  {id:13, cat:"panificacao", name:"Pão caseiro", meta:"Unidade", price:25.00},
+  {id:14, cat:"panificacao", name:"Rosquinha de coco", meta:"Bandeja com 5 unidades", price:15.00},
+  {id:16, cat:"panificacao", name:"Pão integral com mix de sementes", meta:"Unidade", price:30.00},
+  {id:17, cat:"panificacao", name:"Cuca de goiabada", meta:"Pão doce com farofa crocante", price:30.00},
+  {id:18, cat:"panificacao", name:"Cuca de doce de leite", meta:"Pão doce com farofa crocante", price:30.00},
+
+  {id:19, cat:"biscoitos", name:"Biscoito Quebrador", meta:"Pacote", price:15.00},
+  {id:20, cat:"biscoitos", name:"Peta", meta:"Pacote", price:15.00},
+];
+
+/* ---------------- ESTADO ---------------- */
+let cart = {}; // id -> qty
+let activeCat = CATEGORIES[0].id;
+
+/* ---------------- RENDER TABS ---------------- */
+const tabsNav = document.getElementById('tabsNav');
+CATEGORIES.forEach(c=>{
+  const b = document.createElement('button');
+  b.className = 'tab-btn' + (c.id===activeCat ? ' active':'');
+  b.textContent = c.label;
+  b.dataset.cat = c.id;
+  b.addEventListener('click', ()=>setActiveCat(c.id));
+  tabsNav.appendChild(b);
+});
+
+function setActiveCat(catId){
+  activeCat = catId;
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.cat===catId));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active', p.dataset.cat===catId));
+}
+
+/* ---------------- RENDER PANELS ---------------- */
+const panelsWrap = document.getElementById('panelsWrap');
+CATEGORIES.forEach(c=>{
+  const panel = document.createElement('div');
+  panel.className = 'panel' + (c.id===activeCat?' active':'');
+  panel.dataset.cat = c.id;
+
+  if(c.soon){
+    panel.innerHTML = `<div class="soon"><div class="display">Em breve por aqui 🍪</div>Novidades chegando ao cardápio de quitutes. Fale no WhatsApp para saber mais.</div>`;
+    panelsWrap.appendChild(panel);
+    return;
+  }
+
+  const head = document.createElement('div');
+  head.className = 'panel-head';
+  head.innerHTML = `<h2>${c.label}</h2><p>${c.desc}</p>`;
+  panel.appendChild(head);
+
+  const grid = document.createElement('div');
+  grid.className = 'grid';
+
+  ITEMS.filter(i=>i.cat===c.id).forEach(item=>{
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="name">${item.name}</div>
+      <div class="meta">${item.meta}</div>
+      <div class="price">${formatBRL(item.price)}</div>
+      <div class="card-foot">
+        <div class="stepper">
+          <button data-act="dec" data-id="${item.id}">−</button>
+          <span id="qty-${item.id}">1</span>
+          <button data-act="inc" data-id="${item.id}">+</button>
+        </div>
+        <button class="add-btn" data-add="${item.id}">Adicionar</button>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+
+  panel.appendChild(grid);
+  panelsWrap.appendChild(panel);
+});
+
+/* Steppers da vitrine (quantidade antes de adicionar) */
+const pendingQty = {};
+ITEMS.forEach(i=> pendingQty[i.id] = 1);
+
+panelsWrap.addEventListener('click', (e)=>{
+  const dec = e.target.closest('[data-act="dec"]');
+  const inc = e.target.closest('[data-act="inc"]');
+  const add = e.target.closest('[data-add]');
+
+  if(dec){
+    const id = dec.dataset.id;
+    pendingQty[id] = Math.max(1, pendingQty[id]-1);
+    document.getElementById('qty-'+id).textContent = pendingQty[id];
+  }
+  if(inc){
+    const id = inc.dataset.id;
+    pendingQty[id] = Math.min(20, pendingQty[id]+1);
+    document.getElementById('qty-'+id).textContent = pendingQty[id];
+  }
+  if(add){
+    const id = Number(add.dataset.add);
+    cart[id] = (cart[id]||0) + pendingQty[id];
+    pendingQty[id] = 1;
+    document.getElementById('qty-'+id).textContent = 1;
+    add.textContent = 'Adicionado ✓';
+    add.classList.add('added');
+    setTimeout(()=>{ add.textContent='Adicionar'; add.classList.remove('added'); }, 900);
+    renderCart();
+  }
+});
+
+/* ---------------- CARRINHO ---------------- */
+const drawer = document.getElementById('drawer');
+const overlay = document.getElementById('overlay');
+const drawerBody = document.getElementById('drawerBody');
+const cartCountEl = document.getElementById('cartCount');
+const totalValueEl = document.getElementById('totalValue');
+const finishBtn = document.getElementById('finishBtn');
+
+function openCart(){ drawer.classList.add('show'); overlay.classList.add('show'); }
+function closeCart(){ drawer.classList.remove('show'); overlay.classList.remove('show'); }
+document.getElementById('openCartBtn').addEventListener('click', openCart);
+document.getElementById('closeCartBtn').addEventListener('click', closeCart);
+overlay.addEventListener('click', closeCart);
+
+function renderCart(){
+  const ids = Object.keys(cart).filter(id=>cart[id]>0);
+  const totalItems = ids.reduce((s,id)=>s+cart[id],0);
+  cartCountEl.textContent = totalItems;
+
+  if(ids.length===0){
+    drawerBody.innerHTML = `<div class="empty-cart">Seu carrinho está vazio.<br>Escolha um bolo delicioso no cardápio 🍰</div>`;
+    totalValueEl.textContent = formatBRL(0);
+    finishBtn.disabled = true;
+    return;
+  }
+
+  let total = 0;
+  drawerBody.innerHTML = '';
+  ids.forEach(id=>{
+    const item = ITEMS.find(i=>i.id===Number(id));
+    const qty = cart[id];
+    const subtotal = item.price*qty;
+    total += subtotal;
+    const row = document.createElement('div');
+    row.className = 'cart-item';
+    row.innerHTML = `
+      <div>
+        <div class="ci-name">${qty}x ${item.name}</div>
+        <div class="ci-price">${formatBRL(item.price)} cada · ${formatBRL(subtotal)}</div>
+      </div>
+      <div class="ci-right">
+        <div class="stepper">
+          <button data-cart-act="dec" data-cart-id="${id}">−</button>
+          <span>${qty}</span>
+          <button data-cart-act="inc" data-cart-id="${id}">+</button>
+        </div>
+        <button class="remove-link" data-remove="${id}">remover</button>
+      </div>
+    `;
+    drawerBody.appendChild(row);
+  });
+
+  totalValueEl.textContent = formatBRL(total);
+  finishBtn.disabled = false;
+}
+
+drawerBody.addEventListener('click', (e)=>{
+  const dec = e.target.closest('[data-cart-act="dec"]');
+  const inc = e.target.closest('[data-cart-act="inc"]');
+  const rem = e.target.closest('[data-remove]');
+  if(dec){ const id=dec.dataset.cartId; cart[id]=Math.max(0,cart[id]-1); renderCart(); }
+  if(inc){ const id=inc.dataset.cartId; cart[id]=Math.min(20,cart[id]+1); renderCart(); }
+  if(rem){ const id=rem.dataset.remove; delete cart[id]; renderCart(); }
+});
+
+/* ---------------- FINALIZAR NO WHATSAPP ---------------- */
+finishBtn.addEventListener('click', ()=>{
+  const ids = Object.keys(cart).filter(id=>cart[id]>0);
+  if(ids.length===0) return;
+
+  let total = 0;
+  let lines = ids.map(id=>{
+    const item = ITEMS.find(i=>i.id===Number(id));
+    const qty = cart[id];
+    const subtotal = item.price*qty;
+    total += subtotal;
+    return `• ${qty}x ${item.name} — ${formatBRL(subtotal)}`;
+  });
+
+  const delivery = document.getElementById('deliveryType').value;
+  const obs = document.getElementById('obsField').value.trim();
+
+  let msg = `Olá, Dalva! 🍰 Quero fazer um pedido pelo site:\n\n`;
+  msg += lines.join('\n');
+  msg += `\n\nTotal: ${formatBRL(total)}`;
+  msg += `\nEntrega: ${delivery}`;
+  if(obs) msg += `\nObservações: ${obs}`;
+
+  const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank');
+});
+
+/* ---------------- LINKS WHATSAPP GERAIS ---------------- */
+const genericWhatsUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Olá, Dalva! Vim pelo site e queria fazer um pedido 🍰')}`;
+['headerWhatsLink','heroWhatsLink','footerWhatsLink'].forEach(id=>{
+  document.getElementById(id).href = genericWhatsUrl;
+});
+
+/* ---------------- UTIL ---------------- */
+function formatBRL(v){
+  return v.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
+}
+
+renderCart();
+</script>
+</body>
+</html>
