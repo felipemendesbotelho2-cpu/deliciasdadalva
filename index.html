@@ -12,7 +12,7 @@
     --cream:#FBF1E2;
     --cream-card:#FFFCF6;
     --burgundy:#7A2333;
-    --burgundy-dark:#5C1826;a
+    --burgundy-dark:#5C1826;
     --ink:#3C2415;
     --gold:#C08A28;
     --gold-soft:#E9C77B;
@@ -353,12 +353,11 @@
 
 <script>
 /* ---------------- CONFIG ---------------- */
-const WHATSAPP_NUMBER = "5563992829742"; // (63) 99282-9742 com DDI 55
+const WHATSAPP_NUMBER = "5563992829742";
 
 /* ---------------- GOOGLE SHEETS + CATÁLOGO ---------------- */
 const SHEET_PUBLISHED_URL = "https://docs.google.com/spreadsheets/d/1VRfjgs_nQ9WwHocsuCVAdKTEwthBa3Wxa9n4VcCdMHM/edit?gid=625267433#gid=625267433";
 
-// Extrai o ID da planilha e gera o link de exportação em CSV
 function buildSheetCsvUrl(url) {
   const idMatch = url.match(/\/d\/([a-zA-Z0-9-_]+)/);
   const id = idMatch ? idMatch[1] : '';
@@ -410,7 +409,7 @@ function escapeHtml(v) {
 
 async function loadProductsFromSheet() {
   const response = await fetch(SHEET_CSV_URL, { cache: 'no-store' });
-  if (!response.ok) throw new Error('Não foi possível acessar a planilha. Verifique as permissões.');
+  if (!response.ok) throw new Error('Não foi possível acessar a planilha. Verifique as permissões de compartilhamento.');
   const csv = await response.text();
   const rows = parseCSV(csv);
   if (rows.length < 2) throw new Error('A planilha está vazia.');
@@ -426,7 +425,6 @@ async function loadProductsFromSheet() {
 
   const iId = idx('SKU', 'ID');
   const iName = idx('Nome', 'Produto', 'Nomedoproduto');
-  // Adicionado suporte para "Preço (R$)" da sua planilha
   const iPrice = idx('Preço (R$)', 'Preço(R$)', 'Preco(R$)', 'Preço', 'Preco', 'Valor');
   const iCat = idx('Categoria', 'Categorias');
   const iImg = idx('Imagem (URL)', 'Foto (URL)', 'Imagem', 'Foto', 'URLdaimagem');
@@ -449,7 +447,7 @@ async function loadProductsFromSheet() {
     featured: iFeatured < 0 ? false : truthy(r[iFeatured])
   })).filter(i => i.name && i.active);
 
-  if (!ITEMS.length) throw new Error('Nenhum produto ativo foi encontrado.');
+  if (!ITEMS.length) throw new Error('Nenhum produto ativo foi encontrado na planilha.');
 
   const seen = new Set();
   CATEGORIES = ITEMS.map(i => i.cat).filter(c => {
@@ -713,3 +711,5 @@ function formatBRL(v) {
 initCatalog();
 renderCart();
 </script>
+</body>
+</html>
