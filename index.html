@@ -143,6 +143,9 @@
     display:flex;flex-direction:column;gap:10px;
     box-shadow:var(--shadow);
   }
+  .card-image{width:calc(100% + 36px);height:190px;margin-left:-18px;object-fit:cover;background:#F3DAD1;border-bottom:1px solid var(--line);}
+  .card-image.placeholder{display:flex;align-items:center;justify-content:center;font-size:3rem;}
+  .card-content{display:flex;flex-direction:column;gap:10px;padding-top:14px;flex:1;}
   .card .name{font-family:'Fraunces',serif;font-weight:600;font-size:1.08rem;color:var(--ink);}
   .card .meta{font-size:0.82rem;color:#9A7B5C;}
   .card .price{font-weight:800;color:var(--burgundy);font-size:1.05rem;margin-top:auto;}
@@ -306,12 +309,23 @@
   </div>
   <div class="drawer-foot">
     <div class="field">
+      <label for="customerName">Nome da cliente</label>
+      <input id="customerName" type="text" placeholder="Digite seu nome" autocomplete="name" required>
+    </div>
+
+    <div class="field">
       <label for="deliveryType">Entrega</label>
       <select id="deliveryType">
         <option value="Retirada">Retirar no local</option>
-        <option value="Entrega">Entrega (combinar endereço)</option>
+        <option value="Entrega">Entrega</option>
       </select>
     </div>
+
+    <div class="field" id="addressField" style="display:none;">
+      <label for="customerAddress">Endereço para entrega</label>
+      <textarea id="customerAddress" placeholder="Rua, número, bairro e complemento" autocomplete="street-address"></textarea>
+    </div>
+
     <div class="field">
       <label for="obsField">Observações (opcional)</label>
       <textarea id="obsField" placeholder="Ex: sem cobertura, para o dia 20/09, etc."></textarea>
@@ -341,39 +355,99 @@
 /* ---------------- CONFIG ---------------- */
 const WHATSAPP_NUMBER = "5563992829742"; // (63) 99282-9742 com DDI 55
 
-/* ---------------- CATÁLOGO ---------------- */
-const CATEGORIES = [
-  {id:"tradicionais", label:"Bolos Tradicionais", desc:"Bolos médios de 18cm, no sabor clássico de sempre."},
-  {id:"especiais", label:"Bolos Especiais", desc:"Combinações especiais da casa, 18cm."},
-  {id:"panificacao", label:"Panificação", desc:"Pães, cucas e rosquinhas caseiras, fresquinhos."},
-  {id:"biscoitos", label:"Biscoitos Artesanais", desc:"Receitas tradicionais, perfeitas para acompanhar um café."}
-];
+/* ---------------- GOOGLE SHEETS + CATÁLOGO ---------------- */
+const SHEET_PUBLISHED_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRWzgHJtGJWpuWs8kc21s1znQOvMZnZAMElxycaWzLy0Ai7yLS6MgqwTTmC3kWAU6WEHoF9_yeZLPZh/pubhtml";
+const SHEET_CSV_URL = SHEET_PUBLISHED_URL.replace(/\/pubhtml.*$/, "/pub?output=csv");
+let CATEGORIES = [];
+let ITEMS = [];
 
-const ITEMS = [
-  {id:1, cat:"tradicionais", name:"Cenoura", meta:"Bolo médio · 18cm", price:24.00},
-  {id:2, cat:"tradicionais", name:"Chocolate", meta:"Bolo médio · 18cm", price:24.00},
-  {id:3, cat:"tradicionais", name:"Laranja", meta:"Bolo médio · 18cm", price:24.00},
-  {id:4, cat:"tradicionais", name:"Fubá", meta:"Bolo médio · 18cm", price:24.00},
-  {id:5, cat:"tradicionais", name:"Coco", meta:"Bolo médio · 18cm", price:30.00},
-  {id:6, cat:"tradicionais", name:"Milho", meta:"Bolo médio · 18cm", price:26.00},
-  {id:15, cat:"tradicionais", name:"Bolo de arroz tradicional", meta:"Receita de antigamente · 18cm", price:25.00},
+function parseCSV(text){
+  const rows=[]; let row=[], cell='', quoted=false;
+  for(let i=0;i<text.length;i++){
+    const ch=text[i], next=text[i+1];
+    if(ch==='"' && quoted && next==='"'){cell+='"';i++;continue;}
+    if(ch==='"'){quoted=!quoted;continue;}
+    if(ch===',' && !quoted){row.push(cell.trim());cell='';continue;}
+    if((ch==='\n'||ch==='\r')&&!quoted){
+      if(ch==='\r'&&next==='\n')i++;
+      row.push(cell.trim());cell='';
+      if(row.some(v=>v!==''))rows.push(row); row=[]; continue;
+    }
+    cell+=ch;
+  }
+  if(cell!==''||row.length){row.push(cell.trim());if(row.some(v=>v!==''))rows.push(row);}
+  return rows;
+}
+function normalizeHeader(v){return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');}
+function parsePrice(v){
+  const raw=String(v??'').trim(); if(!raw)return 0;
+  const n=Number(raw.replace(/[^0-9,.-]/g,'').replace(/\.(?=\d{3}(?:,|$))/g,'').replace(',','.'));
+  return Number.isFinite(n)?n:0;
+}
+function truthy(v){return ['sim','s','true','1','ativo','yes'].includes(String(v||'').trim().toLowerCase());}
+function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 
-  {id:7, cat:"especiais", name:"Cenoura com chocolate", meta:"Bolo médio · 18cm", price:28.00},
-  {id:8, cat:"especiais", name:"Chocolate com granulado", meta:"Bolo médio · 18cm", price:28.00},
-  {id:9, cat:"especiais", name:"Fubá com goiabada", meta:"Bolo médio · 18cm", price:28.00},
-  {id:10, cat:"especiais", name:"Milho com requeijão", meta:"Bolo médio · 18cm", price:28.00},
-  {id:11, cat:"especiais", name:"Mandioca com coco", meta:"Bolo médio · 18cm", price:34.00},
-  {id:12, cat:"especiais", name:"Mangulão", meta:"Bolo médio · 18cm", price:34.00},
+async function loadProductsFromSheet(){
+  const response=await fetch(SHEET_CSV_URL,{cache:'no-store'});
+  if(!response.ok)throw new Error('Não foi possível acessar a planilha publicada.');
+  const csv=await response.text();
+  const rows=parseCSV(csv);
+  if(rows.length<2)throw new Error('A planilha está vazia.');
 
-  {id:13, cat:"panificacao", name:"Pão caseiro", meta:"Unidade", price:25.00},
-  {id:14, cat:"panificacao", name:"Rosquinha de coco", meta:"Bandeja com 5 unidades", price:15.00},
-  {id:16, cat:"panificacao", name:"Pão integral com mix de sementes", meta:"Unidade", price:30.00},
-  {id:17, cat:"panificacao", name:"Cuca de goiabada", meta:"Pão doce com farofa crocante", price:30.00},
-  {id:18, cat:"panificacao", name:"Cuca de doce de leite", meta:"Pão doce com farofa crocante", price:30.00},
+  const headers=rows[0].map(normalizeHeader);
+  const idx=(...names)=>{for(const name of names){const i=headers.indexOf(normalizeHeader(name));if(i>=0)return i;}return -1;};
+  const iId=idx('ID','SKU');
+  const iName=idx('Nome','Produto','Nome do produto');
+  const iPrice=idx('Preço','Preco','Valor');
+  const iCat=idx('Categoria','Categorias');
+  const iImg=idx('Foto (URL)','Imagem (URL)','Foto','Imagem','URL da imagem');
+  const iDesc=idx('Descrição','Descricao');
+  const iActive=idx('Ativo','Disponível','Disponivel');
+  const iFeatured=idx('Destaque');
 
-  {id:19, cat:"biscoitos", name:"Biscoito Quebrador", meta:"Pacote", price:15.00},
-  {id:20, cat:"biscoitos", name:"Peta", meta:"Pacote", price:15.00},
-];
+  if(iName<0||iPrice<0||iCat<0)throw new Error('A planilha precisa ter as colunas Nome, Preço e Categoria.');
+
+  ITEMS=rows.slice(1).map((r,n)=>({
+    id:iId>=0&&r[iId]?r[iId]:String(n+1),
+    cat:iCat>=0&&r[iCat]?r[iCat]:'Outros',
+    name:r[iName]||'Produto',
+    meta:iDesc>=0?(r[iDesc]||'Produto da casa'):'Produto da casa',
+    price:parsePrice(iPrice>=0?r[iPrice]:0),
+    image:iImg>=0?(r[iImg]||''):'',
+    active:iActive<0?true:truthy(r[iActive]),
+    featured:iFeatured<0?false:truthy(r[iFeatured])
+  })).filter(i=>i.name&&i.active);
+
+  if(!ITEMS.length)throw new Error('Nenhum produto ativo foi encontrado.');
+  const seen=new Set();
+  CATEGORIES=ITEMS.map(i=>i.cat).filter(c=>{if(seen.has(c))return false;seen.add(c);return true;}).map((c,n)=>({id:`cat-${n}`,label:c,desc:'Produtos disponíveis no cardápio.'}));
+}
+
+function renderCatalog(){
+  activeCat=CATEGORIES[0]?.id||'';
+  tabsNav.innerHTML=''; panelsWrap.innerHTML='';
+  CATEGORIES.forEach(c=>{
+    const b=document.createElement('button'); b.className='tab-btn'+(c.id===activeCat?' active':''); b.textContent=c.label; b.dataset.cat=c.id; b.addEventListener('click',()=>setActiveCat(c.id)); tabsNav.appendChild(b);
+    const panel=document.createElement('div'); panel.className='panel'+(c.id===activeCat?' active':''); panel.dataset.cat=c.id;
+    panel.innerHTML=`<div class="panel-head"><h2>${escapeHtml(c.label)}</h2><p>${escapeHtml(c.desc)}</p></div>`;
+    const grid=document.createElement('div'); grid.className='grid';
+    ITEMS.filter(i=>i.cat===c.label).forEach(item=>{
+      const card=document.createElement('div'); card.className='card';
+      const photo=item.image
+        ? `<img class="card-image" src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+        : '';
+      card.innerHTML=`${photo}<div class="card-image placeholder" style="${item.image?'display:none;':''}">🍰</div><div class="card-content"><div class="name">${escapeHtml(item.name)}</div><div class="meta">${escapeHtml(item.meta)}</div><div class="price">${formatBRL(item.price)}</div><div class="card-foot"><div class="stepper"><button data-act="dec" data-id="${escapeHtml(item.id)}">−</button><span id="qty-${escapeHtml(item.id)}">1</span><button data-act="inc" data-id="${escapeHtml(item.id)}">+</button></div><button class="add-btn" data-add="${escapeHtml(item.id)}">Adicionar</button></div></div>`;
+      grid.appendChild(card);
+    });
+    panel.appendChild(grid); panelsWrap.appendChild(panel);
+  });
+  Object.keys(pendingQty).forEach(k=>delete pendingQty[k]); ITEMS.forEach(i=>pendingQty[i.id]=1);
+}
+
+async function initCatalog(){
+  try{await loadProductsFromSheet();renderCatalog();}
+  catch(error){console.error(error);tabsNav.innerHTML='';panelsWrap.innerHTML=`<div class="soon"><div class="display">Não foi possível carregar o cardápio.</div>Confira se a planilha está publicada na web e com acesso público.<br><small>${escapeHtml(error.message)}</small></div>`;}
+}
 
 /* ---------------- ESTADO ---------------- */
 let cart = {}; // id -> qty
@@ -460,8 +534,10 @@ panelsWrap.addEventListener('click', (e)=>{
     document.getElementById('qty-'+id).textContent = pendingQty[id];
   }
   if(add){
-    const id = Number(add.dataset.add);
-    cart[id] = (cart[id]||0) + pendingQty[id];
+    const id = add.dataset.add;
+    const item = ITEMS.find(i=>String(i.id)===String(id));
+    if(!item) return;
+    cart[id] = (cart[id]||0) + (pendingQty[id]||1);
     pendingQty[id] = 1;
     document.getElementById('qty-'+id).textContent = 1;
     add.textContent = 'Adicionado ✓';
@@ -478,6 +554,19 @@ const drawerBody = document.getElementById('drawerBody');
 const cartCountEl = document.getElementById('cartCount');
 const totalValueEl = document.getElementById('totalValue');
 const finishBtn = document.getElementById('finishBtn');
+const deliveryTypeEl = document.getElementById('deliveryType');
+const addressFieldEl = document.getElementById('addressField');
+const customerAddressEl = document.getElementById('customerAddress');
+
+function updateAddressField(){
+  const isDelivery = deliveryTypeEl.value === 'Entrega';
+  addressFieldEl.style.display = isDelivery ? 'block' : 'none';
+  customerAddressEl.required = isDelivery;
+  if(!isDelivery) customerAddressEl.value = '';
+}
+
+deliveryTypeEl.addEventListener('change', updateAddressField);
+updateAddressField();
 
 function openCart(){ drawer.classList.add('show'); overlay.classList.add('show'); }
 function closeCart(){ drawer.classList.remove('show'); overlay.classList.remove('show'); }
@@ -500,7 +589,7 @@ function renderCart(){
   let total = 0;
   drawerBody.innerHTML = '';
   ids.forEach(id=>{
-    const item = ITEMS.find(i=>i.id===Number(id));
+    const item = ITEMS.find(i=>String(i.id)===String(id));
     const qty = cart[id];
     const subtotal = item.price*qty;
     total += subtotal;
@@ -543,20 +632,36 @@ finishBtn.addEventListener('click', ()=>{
 
   let total = 0;
   let lines = ids.map(id=>{
-    const item = ITEMS.find(i=>i.id===Number(id));
+    const item = ITEMS.find(i=>String(i.id)===String(id));
     const qty = cart[id];
     const subtotal = item.price*qty;
     total += subtotal;
     return `• ${qty}x ${item.name} — ${formatBRL(subtotal)}`;
   });
 
+  const customerName = document.getElementById('customerName').value.trim();
   const delivery = document.getElementById('deliveryType').value;
+  const customerAddress = document.getElementById('customerAddress').value.trim();
   const obs = document.getElementById('obsField').value.trim();
 
+  if(!customerName){
+    alert('Por favor, informe o nome da cliente.');
+    document.getElementById('customerName').focus();
+    return;
+  }
+
+  if(delivery === 'Entrega' && !customerAddress){
+    alert('Por favor, informe o endereço para entrega.');
+    document.getElementById('customerAddress').focus();
+    return;
+  }
+
   let msg = `Olá, Dalva! 🍰 Quero fazer um pedido pelo site:\n\n`;
+  msg += `Nome da cliente: ${customerName}\n\n`;
   msg += lines.join('\n');
   msg += `\n\nTotal: ${formatBRL(total)}`;
   msg += `\nEntrega: ${delivery}`;
+  if(delivery === 'Entrega') msg += `\nEndereço: ${customerAddress}`;
   if(obs) msg += `\nObservações: ${obs}`;
 
   const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
@@ -574,6 +679,7 @@ function formatBRL(v){
   return v.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
 }
 
+initCatalog();
 renderCart();
 </script>
 </body>
