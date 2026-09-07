@@ -365,7 +365,7 @@ function buildSheetCsvUrl(url){
   const id = idMatch ? idMatch[1] : '';
   const gidMatch = url.match(/[?&#]gid=([0-9]+)/);
   const gid = gidMatch ? gidMatch[1] : '0';
-  return `https://docs.google.com/spreadsheets/d/${id}/export?format=csv&gid=${gid}`;
+  return `https://docs.google.com/spreadsheets/d/1VRfjgs_nQ9WwHocsuCVAdKTEwthBa3Wxa9n4VcCdMHM/edit?usp=sharing`;
 }
 const SHEET_CSV_URL = buildSheetCsvUrl(SHEET_PUBLISHED_URL);
 
