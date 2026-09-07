@@ -356,7 +356,7 @@
 const WHATSAPP_NUMBER = "5563992829742"; // (63) 99282-9742 com DDI 55
 
 /* ---------------- GOOGLE SHEETS + CATÁLOGO ---------------- */
-const SHEET_PUBLISHED_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRWzgHJtGJWpuWs8kc21s1znQOvMZnZAMElxycaWzLy0Ai7yLS6MgqwTTmC3kWAU6WEHoF9_yeZLPZh/pub?output=csv";
+const SHEET_PUBLISHED_URL = "const SHEET_PUBLISHED_URL = "https://docs.google.com/spreadsheets/d/1VRfjgs_nQ9WwHocsuCVAdKTEwthBa3Wxa9n4VcCdMHM/edit?gid=625267433#gid=625267433";
 
 // Extrai o ID da planilha e gera o link de exportação em CSV
 function buildSheetCsvUrl(url) {
@@ -410,7 +410,7 @@ function escapeHtml(v) {
 
 async function loadProductsFromSheet() {
   const response = await fetch(SHEET_CSV_URL, { cache: 'no-store' });
-  if (!response.ok) throw new Error('Não foi possível acessar a planilha. Verifique as permissões de compartilhamento.');
+  if (!response.ok) throw new Error('Não foi possível acessar a planilha. Verifique as permissões.');
   const csv = await response.text();
   const rows = parseCSV(csv);
   if (rows.length < 2) throw new Error('A planilha está vazia.');
@@ -424,11 +424,12 @@ async function loadProductsFromSheet() {
     return -1;
   };
 
-  const iId = idx('ID', 'SKU');
-  const iName = idx('Nome', 'Produto', 'Nome do produto');
-  const iPrice = idx('Preço', 'Preco', 'Valor');
+  const iId = idx('SKU', 'ID');
+  const iName = idx('Nome', 'Produto', 'Nomedoproduto');
+  // Adicionado suporte para "Preço (R$)" da sua planilha
+  const iPrice = idx('Preço (R$)', 'Preço(R$)', 'Preco(R$)', 'Preço', 'Preco', 'Valor');
   const iCat = idx('Categoria', 'Categorias');
-  const iImg = idx('Foto (URL)', 'Imagem (URL)', 'Foto', 'Imagem', 'URL da imagem');
+  const iImg = idx('Imagem (URL)', 'Foto (URL)', 'Imagem', 'Foto', 'URLdaimagem');
   const iDesc = idx('Descrição', 'Descricao');
   const iActive = idx('Ativo', 'Disponível', 'Disponivel');
   const iFeatured = idx('Destaque');
