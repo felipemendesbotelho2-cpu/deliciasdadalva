@@ -501,7 +501,7 @@ function loadProductsFromSheet(){
           };
           const activeRaw = get('ativo','disponivel');
           return {
-            id: get('sku','id') || String(i + 1),
+            id: String(get('sku','id') || String(i + 1)).trim(),
             nome: (get('nome','produto') || '').trim(),
             cat: (get('categoria') || 'outros').trim().toLowerCase(),
             preco: parsePreco(get('preco(r$)','preco','valor')),
@@ -546,7 +546,7 @@ function renderProducts() {
         <h3 class="font-display font-semibold text-sm text-burgundy-900 leading-snug flex-1">${p.nome}</h3>
         ${p.desc ? `<p class="text-xs text-burgundy-700/60 mt-1">${p.desc}</p>` : ''}
         <p class="text-burgundy-700 font-bold text-lg mt-2">${money(p.preco)}</p>
-        <button onclick="addToCart('${p.id}')" class="cta-btn mt-3 w-full flex items-center justify-center gap-1.5 bg-gold-500 hover:bg-gold-600 text-burgundy-950 text-sm font-semibold py-2.5 rounded-full">
+        <button type="button" data-add-to-cart="${String(p.id).replace(/&/g,'&amp;').replace(/"/g,'&quot;')}" class="add-cart-btn cta-btn mt-3 w-full flex items-center justify-center gap-1.5 bg-gold-500 hover:bg-gold-600 text-burgundy-950 text-sm font-semibold py-2.5 rounded-full">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
           Adicionar
         </button>
@@ -569,7 +569,7 @@ function renderFeatured(){
       <div class="p-3 flex flex-col flex-1">
         <h3 class="font-display font-semibold text-xs text-burgundy-900 leading-snug flex-1">${p.nome}</h3>
         <p class="text-burgundy-700 font-bold text-base mt-1.5">${money(p.preco)}</p>
-        <button onclick="addToCart('${p.id}')" class="cta-btn mt-2 w-full flex items-center justify-center gap-1 bg-gold-500 hover:bg-gold-600 text-burgundy-950 text-xs font-semibold py-2 rounded-full">
+        <button type="button" data-add-to-cart="${String(p.id).replace(/&/g,'&amp;').replace(/"/g,'&quot;')}" class="add-cart-btn cta-btn mt-2 w-full flex items-center justify-center gap-1 bg-gold-500 hover:bg-gold-600 text-burgundy-950 text-xs font-semibold py-2 rounded-full">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
           Adicionar
         </button>
@@ -577,6 +577,14 @@ function renderFeatured(){
     </div>
   `).join('');
 }
+
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-add-to-cart]');
+  if (!btn) return;
+  e.preventDefault();
+  e.stopPropagation();
+  addToCart(btn.getAttribute('data-add-to-cart'));
+});
 
 document.getElementById('cat-filters').addEventListener('click', (e) => {
   const btn = e.target.closest('.cat-btn');
@@ -590,11 +598,28 @@ document.getElementById('cat-filters').addEventListener('click', (e) => {
 function saveCart(){ localStorage.setItem('dalva_cart', JSON.stringify(cart)); }
 
 function addToCart(id){
-  const prod = PRODUCTS.find(p => String(p.id) === String(id));
-  if (!prod) return;
-  const item = cart.find(i => String(i.id) === String(id));
-  if (item) item.qtd += 1;
-  else cart.push({ id: prod.id, nome: prod.nome, preco: prod.preco, qtd: 1 });
+  const normalizedId = String(id ?? '').trim();
+  const prod = PRODUCTS.find(p => String(p.id ?? '').trim() === normalizedId);
+
+  if (!prod){
+    console.error('Produto não encontrado no carrinho:', normalizedId, PRODUCTS);
+    alert('Não consegui identificar este produto. Recarregue o cardápio e tente novamente.');
+    return;
+  }
+
+  const item = cart.find(i => String(i.id ?? '').trim() === normalizedId);
+
+  if (item) {
+    item.qtd = Number(item.qtd || 0) + 1;
+  } else {
+    cart.push({
+      id: normalizedId,
+      nome: prod.nome,
+      preco: Number(prod.preco) || 0,
+      qtd: 1
+    });
+  }
+
   saveCart();
   renderCart();
   openCart();
