@@ -529,18 +529,25 @@ function loadProductsFromSheet(){
   });
 }
 
-// Carrega o carrinho com segurança. Se houver dados antigos/corrompidos,
-// limpa apenas o carrinho para o site continuar funcionando normalmente.
+// Carrinho: normaliza qualquer dado antigo salvo no navegador.
 let cart = [];
 try {
-  const savedCart = JSON.parse(localStorage.getItem('dalva_cart') || '[]');
-  cart = Array.isArray(savedCart) ? savedCart.filter(i => i && i.id != null) : [];
+  const saved = JSON.parse(localStorage.getItem('dalva_cart') || '[]');
+  if (Array.isArray(saved)) {
+    cart = saved.map(i => ({
+      id: String(i?.id ?? '').trim(),
+      nome: String(i?.nome ?? '').trim(),
+      preco: Number(i?.preco) || 0,
+      qtd: Math.max(1, Number(i?.qtd) || 1)
+    })).filter(i => i.id && i.nome);
+  }
 } catch (err) {
-  console.warn('Carrinho antigo inválido. Iniciando um carrinho vazio.', err);
-  localStorage.removeItem('dalva_cart');
+  console.warn('Carrinho antigo inválido. Limpando.', err);
   cart = [];
+  try { localStorage.removeItem('dalva_cart'); } catch(e) {}
 }
 let activeCat = "todos";
+
 
 function money(v){ return v.toLocaleString('pt-BR', { style:'currency', currency:'BRL' }); }
 
@@ -557,7 +564,7 @@ function renderProducts() {
         <h3 class="font-display font-semibold text-sm text-burgundy-900 leading-snug flex-1">${p.nome}</h3>
         ${p.desc ? `<p class="text-xs text-burgundy-700/60 mt-1">${p.desc}</p>` : ''}
         <p class="text-burgundy-700 font-bold text-lg mt-2">${money(p.preco)}</p>
-        <button type="button" data-add-to-cart="${String(p.id).replace(/&/g,'&amp;').replace(/"/g,'&quot;')}" onclick="addToCart(this.dataset.addToCart)" class="add-cart-btn cta-btn mt-3 w-full flex items-center justify-center gap-1.5 bg-gold-500 hover:bg-gold-600 text-burgundy-950 text-sm font-semibold py-2.5 rounded-full">
+        <button type="button" data-add-to-cart="${String(p.id).replace(/&/g,'&amp;').replace(/"/g,'&quot;')}" class="add-cart-btn cta-btn mt-3 w-full flex items-center justify-center gap-1.5 bg-gold-500 hover:bg-gold-600 text-burgundy-950 text-sm font-semibold py-2.5 rounded-full">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
           Adicionar
         </button>
@@ -580,7 +587,7 @@ function renderFeatured(){
       <div class="p-3 flex flex-col flex-1">
         <h3 class="font-display font-semibold text-xs text-burgundy-900 leading-snug flex-1">${p.nome}</h3>
         <p class="text-burgundy-700 font-bold text-base mt-1.5">${money(p.preco)}</p>
-        <button type="button" data-add-to-cart="${String(p.id).replace(/&/g,'&amp;').replace(/"/g,'&quot;')}" onclick="addToCart(this.dataset.addToCart)" class="add-cart-btn cta-btn mt-2 w-full flex items-center justify-center gap-1 bg-gold-500 hover:bg-gold-600 text-burgundy-950 text-xs font-semibold py-2 rounded-full">
+        <button type="button" data-add-to-cart="${String(p.id).replace(/&/g,'&amp;').replace(/"/g,'&quot;')}" class="add-cart-btn cta-btn mt-2 w-full flex items-center justify-center gap-1 bg-gold-500 hover:bg-gold-600 text-burgundy-950 text-xs font-semibold py-2 rounded-full">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
           Adicionar
         </button>
@@ -601,38 +608,58 @@ document.getElementById('cat-filters').addEventListener('click', (e) => {
 function saveCart(){ localStorage.setItem('dalva_cart', JSON.stringify(cart)); }
 
 function addToCart(id){
-  const normalizedId = String(id ?? '').trim();
-  if (!normalizedId) return;
+  try {
+    const normalizedId = String(id ?? '').trim();
+    if (!normalizedId) {
+      console.error('ID do produto vazio');
+      return false;
+    }
 
-  const prod = PRODUCTS.find(p => String(p.id ?? '').trim() === normalizedId);
-  if (!prod){
-    console.error('Produto não encontrado no carrinho:', normalizedId, PRODUCTS);
-    alert('Não consegui identificar este produto. Recarregue o cardápio e tente novamente.');
-    return;
+    const prod = PRODUCTS.find(p => String(p.id ?? '').trim() === normalizedId);
+    if (!prod) {
+      console.error('Produto não encontrado:', normalizedId, PRODUCTS);
+      alert('Produto não encontrado. Atualize a página e tente novamente.');
+      return false;
+    }
+
+    let item = cart.find(i => String(i.id ?? '').trim() === normalizedId);
+    if (item) {
+      item.qtd = Math.max(1, Number(item.qtd) || 1) + 1;
+      item.preco = Number(prod.preco) || 0;
+      item.nome = prod.nome;
+    } else {
+      cart.push({
+        id: normalizedId,
+        nome: prod.nome,
+        preco: Number(prod.preco) || 0,
+        qtd: 1
+      });
+    }
+
+    saveCart();
+    renderCart();
+    openCart();
+    return true;
+  } catch (err) {
+    console.error('Erro ao adicionar produto:', err);
+    alert('Ocorreu um erro ao adicionar o produto. Recarregue a página e tente novamente.');
+    return false;
   }
-
-  let item = cart.find(i => String(i.id ?? '').trim() === normalizedId);
-  if (item) {
-    item.qtd = Math.max(1, Number(item.qtd) || 0) + 1;
-  } else {
-    item = {
-      id: normalizedId,
-      nome: prod.nome,
-      preco: Number(prod.preco) || 0,
-      qtd: 1
-    };
-    cart.push(item);
-  }
-
-  saveCart();
-  renderCart();
-  openCart();
 }
+
+// Os botões são criados dinamicamente pela planilha, então o clique é tratado no documento.
+document.addEventListener('click', function(e) {
+  const btn = e.target.closest('[data-add-to-cart]');
+  if (!btn) return;
+  e.preventDefault();
+  e.stopPropagation();
+  addToCart(btn.getAttribute('data-add-to-cart'));
+});
 
 function changeQty(id, delta){
   const item = cart.find(i => String(i.id) === String(id));
   if (!item) return;
-  item.qtd += delta;
+  item.qtd = (Number(item.qtd) || 0) + delta;
   if (item.qtd <= 0) cart = cart.filter(i => String(i.id) !== String(id));
   saveCart();
   renderCart();
@@ -644,7 +671,7 @@ function renderCart(){
   const footerEl = document.getElementById('cart-footer');
   const countEl = document.getElementById('cart-count');
 
-  const totalQtd = cart.reduce((s,i)=>s+i.qtd,0);
+  const totalQtd = cart.reduce((s,i)=>s+(Number(i.qtd)||0),0);
   countEl.textContent = totalQtd;
   countEl.classList.toggle('hidden', totalQtd === 0);
 
@@ -668,18 +695,18 @@ function renderCart(){
     <div class="flex items-center gap-3 border-b border-burgundy-50 pb-4">
       <div class="flex-1">
         <p class="text-sm font-medium text-burgundy-900">${i.nome}</p>
-        <p class="text-xs text-burgundy-700/50">${money(i.preco)} un.</p>
+        <p class="text-xs text-burgundy-700/50">${money(Number(i.preco)||0)} un.</p>
       </div>
       <div class="flex items-center gap-2">
         <button onclick="changeQty('${i.id}',-1)" class="w-7 h-7 rounded-full border border-burgundy-200 text-burgundy-600 flex items-center justify-center">−</button>
         <span class="text-sm font-semibold w-5 text-center">${i.qtd}</span>
         <button onclick="changeQty('${i.id}',1)" class="w-7 h-7 rounded-full border border-burgundy-200 text-burgundy-600 flex items-center justify-center">+</button>
       </div>
-      <p class="text-sm font-semibold text-burgundy-900 w-16 text-right">${money(i.preco*i.qtd)}</p>
+      <p class="text-sm font-semibold text-burgundy-900 w-16 text-right">${money((Number(i.preco)||0)*(Number(i.qtd)||0))}</p>
     </div>
   `).join('');
 
-  const subtotal = cart.reduce((s,i)=>s+i.preco*i.qtd,0);
+  const subtotal = cart.reduce((s,i)=>s+(Number(i.preco)||0)*(Number(i.qtd)||0),0);
   document.getElementById('cart-subtotal').textContent = money(subtotal);
 }
 
@@ -709,8 +736,8 @@ function checkoutWhatsApp(){
   }
 
   let msg = `Olá, Dalva! Quero fazer um pedido no *Delícias da Dalva*:\n\n`;
-  cart.forEach(i => { msg += `• ${i.qtd}x ${i.nome} — ${money(i.preco*i.qtd)}\n`; });
-  const subtotal = cart.reduce((s,i)=>s+i.preco*i.qtd,0);
+  cart.forEach(i => { msg += `• ${i.qtd}x ${i.nome} — ${money((Number(i.preco)||0)*(Number(i.qtd)||0))}\n`; });
+  const subtotal = cart.reduce((s,i)=>s+(Number(i.preco)||0)*(Number(i.qtd)||0),0);
   msg += `\n*Subtotal: ${money(subtotal)}*\n\n`;
   msg += `*Dados do pedido:*\n`;
   msg += `Nome: ${nome}\n`;
