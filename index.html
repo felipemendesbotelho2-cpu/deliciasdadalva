@@ -605,44 +605,34 @@ document.getElementById('cat-filters').addEventListener('click', (e) => {
   renderProducts();
 });
 
-function saveCart(){ localStorage.setItem('dalva_cart', JSON.stringify(cart)); }
+function saveCart(){
+  try { localStorage.setItem('dalva_cart', JSON.stringify(cart)); }
+  catch(err){ console.warn('Não foi possível salvar o carrinho no navegador:', err); }
+}
 
 function addToCart(id){
+  const normalizedId = String(id ?? '').trim();
+  const prod = PRODUCTS.find(p => String(p.id ?? '').trim() === normalizedId);
+  if (!prod){
+    console.error('Produto não encontrado:', normalizedId, PRODUCTS);
+    alert('Produto não encontrado. Atualize a página e tente novamente.');
+    return false;
+  }
+
   try {
-    const normalizedId = String(id ?? '').trim();
-    if (!normalizedId) {
-      console.error('ID do produto vazio');
-      return false;
-    }
-
-    const prod = PRODUCTS.find(p => String(p.id ?? '').trim() === normalizedId);
-    if (!prod) {
-      console.error('Produto não encontrado:', normalizedId, PRODUCTS);
-      alert('Produto não encontrado. Atualize a página e tente novamente.');
-      return false;
-    }
-
     let item = cart.find(i => String(i.id ?? '').trim() === normalizedId);
-    if (item) {
-      item.qtd = Math.max(1, Number(item.qtd) || 1) + 1;
-      item.preco = Number(prod.preco) || 0;
-      item.nome = prod.nome;
-    } else {
-      cart.push({
-        id: normalizedId,
-        nome: prod.nome,
-        preco: Number(prod.preco) || 0,
-        qtd: 1
-      });
-    }
+    if (item) item.qtd = (Number(item.qtd) || 0) + 1;
+    else cart.push({ id: normalizedId, nome: String(prod.nome || ''), preco: Number(prod.preco) || 0, qtd: 1 });
 
     saveCart();
-    renderCart();
-    openCart();
+
+    // Mesmo que alguma parte visual falhe, o produto continua no carrinho.
+    try { renderCart(); } catch(err) { console.error('Erro ao desenhar carrinho:', err); }
+    try { openCart(); } catch(err) { console.error('Erro ao abrir carrinho:', err); }
     return true;
-  } catch (err) {
+  } catch(err){
     console.error('Erro ao adicionar produto:', err);
-    alert('Ocorreu um erro ao adicionar o produto. Recarregue a página e tente novamente.');
+    alert('Erro ao adicionar o produto: ' + (err && err.message ? err.message : 'erro desconhecido'));
     return false;
   }
 }
@@ -655,6 +645,9 @@ document.addEventListener('click', function(e) {
   e.stopPropagation();
   addToCart(btn.getAttribute('data-add-to-cart'));
 });
+
+// Atualiza o ícone ao abrir a página, sem depender do carregamento da planilha.
+try { renderCart(); } catch(err) { console.warn('Falha inicial ao renderizar carrinho:', err); }
 
 function changeQty(id, delta){
   const item = cart.find(i => String(i.id) === String(id));
@@ -718,6 +711,53 @@ function closeCart(){
   document.getElementById('cart-drawer').classList.add('translate-x-full');
   document.getElementById('overlay').classList.add('opacity-0','pointer-events-none');
 }
+
+// --- CORREÇÃO ROBUSTA DO CARRINHO ---
+// Substitui a rotina anterior e evita que uma falha visual impeça a adição.
+function saveCart(){
+  try { localStorage.setItem('dalva_cart', JSON.stringify(cart)); }
+  catch(e){ console.warn('Não foi possível salvar o carrinho localmente.', e); }
+}
+
+function addToCart(id){
+  const normalizedId = String(id == null ? '' : id).trim();
+  const prod = PRODUCTS.find(function(p){ return String(p && p.id == null ? '' : p.id).trim() === normalizedId; });
+  if (!prod){
+    alert('Produto não encontrado. Recarregue a página e tente novamente.');
+    return false;
+  }
+  const existing = cart.find(function(i){ return String(i.id).trim() === normalizedId; });
+  if (existing) existing.qtd = Number(existing.qtd || 0) + 1;
+  else cart.push({id: normalizedId, nome: String(prod.nome || 'Produto'), preco: Number(prod.preco || 0), qtd: 1});
+  saveCart();
+  try { renderCart(); } catch(e) { console.error('Erro ao atualizar carrinho:', e); }
+  try { openCart(); } catch(e) { console.error('Erro ao abrir carrinho:', e); }
+  return true;
+}
+
+function renderCart(){
+  const itemsEl=document.getElementById('cart-items');
+  const emptyEl=document.getElementById('cart-empty');
+  const footerEl=document.getElementById('cart-footer');
+  const countEl=document.getElementById('cart-count');
+  if(!itemsEl || !emptyEl || !footerEl) return;
+  const totalQtd=cart.reduce(function(s,i){return s+(Number(i.qtd)||0)},0);
+  if(countEl){ countEl.textContent=totalQtd; countEl.classList.toggle('hidden',totalQtd===0); }
+  const floatCountEl=document.getElementById('cart-count-float');
+  if(floatCountEl){ floatCountEl.textContent=totalQtd; floatCountEl.classList.toggle('hidden',totalQtd===0); }
+  if(!cart.length){ itemsEl.innerHTML=''; emptyEl.classList.remove('hidden'); footerEl.classList.add('hidden'); return; }
+  emptyEl.classList.add('hidden'); footerEl.classList.remove('hidden');
+  itemsEl.innerHTML=cart.map(function(i){ return '<div class="flex items-center gap-3 border-b border-burgundy-50 pb-4"><div class="flex-1"><p class="text-sm font-medium text-burgundy-900">'+String(i.nome)+'</p><p class="text-xs text-burgundy-700/50">'+money(Number(i.preco)||0)+' un.</p></div><div class="flex items-center gap-2"><button type="button" data-cart-id="'+String(i.id)+'" data-cart-delta="-1" class="w-7 h-7 rounded-full border border-burgundy-200 text-burgundy-600 flex items-center justify-center">−</button><span class="text-sm font-semibold w-5 text-center">'+Number(i.qtd)+'</span><button type="button" data-cart-id="'+String(i.id)+'" data-cart-delta="1" class="w-7 h-7 rounded-full border border-burgundy-200 text-burgundy-600 flex items-center justify-center">+</button></div><p class="text-sm font-semibold text-burgundy-900 w-16 text-right">'+money((Number(i.preco)||0)*(Number(i.qtd)||0))+'</p></div>'; }).join('');
+  const subtotal=cart.reduce(function(s,i){return s+(Number(i.preco)||0)*(Number(i.qtd)||0)},0);
+  const subEl=document.getElementById('cart-subtotal'); if(subEl) subEl.textContent=money(subtotal);
+}
+
+document.addEventListener('click', function(e){
+  const qtyBtn=e.target.closest('[data-cart-delta]');
+  if(!qtyBtn) return;
+  e.preventDefault();
+  changeQty(qtyBtn.getAttribute('data-cart-id'), Number(qtyBtn.getAttribute('data-cart-delta')));
+});
 
 function checkoutWhatsApp(){
   if (cart.length === 0) return;
